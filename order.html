@@ -1,48 +1,73 @@
 <!DOCTYPE html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Order a label preflight — LabelReady Canada</title>
+<title>Start a label preflight — LabelReady Canada</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/style.css"></head>
 <body><div class="wrap">
-<header class="site"><a class="logo" href="index.html">LabelReady Canada</a>
-<nav><a href="dashboard.html">Dashboard</a><a href="login.html">Log in</a></nav></header>
+
+<header class="site">
+<a class="wordmark" href="index.html"><svg class="mark" width="26" height="26" viewBox="0 0 26 26" aria-hidden="true"><rect width="26" height="26" rx="5" fill="#0E5941"/><path d="M7 13.5l4 4L19 9" stroke="#fff" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="name">LabelReady Canada</span></a>
+<nav class="main">
+<a href="index.html#how">How it works</a>
+<a href="index.html#sample">Sample report</a>
+<a href="index.html#pricing">Pricing</a>
+<a href="index.html#faq">FAQ</a>
+<a href="login.html">Sign in</a>
+<a class="btn small" href="order.html">Start</a>
+</nav></header>
 
 <div id="mode-banner" class="banner" style="display:none"></div>
-<h1 style="font-size:1.6rem">Label preflight intake — one SKU, $49</h1>
-<p class="fine">Supported beachhead: Ontario shelf-stable sauces &amp; condiments. Other categories get a free eligibility check before any payment. Fields mirror what the preflight actually checks — nothing is silently inferred.</p>
 
-<form id="intake">
-<div class="card"><h2>About you</h2>
+<div style="max-width:820px">
+<p class="sec-label" style="margin-top:40px">Order</p>
+<h1 style="font-size:2rem">Label preflight intake — one SKU, $49</h1>
+<p class="lede" style="font-size:1.02rem">Supported scope: Ontario shelf-stable sauces and condiments. Anything else gets a free eligibility check before any payment. The fields below mirror what the preflight actually checks — nothing is silently inferred, and unknown answers stay unknown.</p>
+
+<ol class="progress" id="progress">
+<li class="cur" data-p="1"><span class="n">1</span><span class="lbl">Your details</span></li>
+<li data-p="2"><span class="n">2</span><span class="lbl">Your label</span></li>
+<li data-p="3"><span class="n">3</span><span class="lbl">Review</span></li>
+</ol>
+
+<form id="intake" novalidate>
+<div class="steppane on" data-pane="1">
+<div class="card"><h2 style="font-size:1.3rem">Your details</h2>
 <div class="grid">
-<div><label for="brand">Brand / company *</label><input id="brand" required></div>
-<div><label for="contact_name">Contact name *</label><input id="contact_name" required></div>
-<div><label for="contact_email">Contact email *</label><input id="contact_email" type="email" required></div>
+<div><label for="brand">Brand / company <span class="req">*</span></label><input id="brand"></div>
+<div><label for="contact_name">Contact name <span class="req">*</span></label><input id="contact_name" autocomplete="name"></div>
+<div><label for="contact_email">Contact email <span class="req">*</span></label><input id="contact_email" type="email" autocomplete="email"></div>
 <div><label for="province">Province sold</label><select id="province"><option>Ontario</option><option>Other (eligibility check)</option></select></div>
 </div></div>
+<div class="stepnav"><span></span><button class="btn brand" type="button" data-next>Continue</button></div>
+</div>
 
-<div class="card"><h2>Product</h2>
+<div class="steppane" data-pane="2">
+<div class="card"><h2 style="font-size:1.3rem">The product</h2>
 <div class="grid">
-<div><label for="product_name">Product name (common name on label) *</label><input id="product_name" required></div>
-<div><label for="category">Category *</label><select id="category">
+<div><label for="product_name">Product name (common name on the label) <span class="req">*</span></label><input id="product_name"></div>
+<div><label for="category">Category <span class="req">*</span></label><select id="category">
 <option>Shelf-stable sauce</option><option>Shelf-stable condiment</option>
 <option>Other packaged food (eligibility check first)</option></select></div>
-<div><label for="net_quantity">Net quantity (as declared, e.g. 355 mL) *</label><input id="net_quantity" required></div>
-<div><label for="label_language">Language(s) on the label *</label><select id="label_language">
+<div><label for="net_quantity">Net quantity, as declared (e.g. 355 mL) <span class="req">*</span></label><input id="net_quantity"></div>
+<div><label for="label_language">Language(s) on the label <span class="req">*</span></label><select id="label_language">
 <option>English and French</option><option>English only</option><option>French only</option></select></div>
 <div><label for="packaging_style">Packaging style</label><input id="packaging_style" placeholder="e.g. glass bottle, paper label"></div>
 <div><label for="consumer_age">Intended consumer</label><select id="consumer_age"><option>General / adults</option><option>Children</option></select></div>
-<div><label for="pds_cm">Principal display surface (cm², if known)</label><input id="pds_cm" inputmode="decimal" placeholder="Needed for type-size / symbol-size checks"></div>
+<div><label for="pds_cm">Principal display surface (cm², if known)</label><input id="pds_cm" inputmode="decimal" placeholder="Used for type-size and symbol-size checks"></div>
 <div><label for="ads_cm">Available display surface (cm², if known)</label><input id="ads_cm" inputmode="decimal"></div>
 </div>
-<label for="artwork">Artwork file (PDF/JPG/PNG, front &amp; back, max 25 MB)</label>
+<label for="artwork">Artwork file (PDF/JPG/PNG, front and back, max 25 MB)</label>
 <input id="artwork" type="file" accept=".pdf,.jpg,.jpeg,.png" disabled>
-<p class="fine">Uploads switch on with the live platform (private Supabase Storage bucket “artwork”, signed links, 30-day deletion). In preview, note your file name below and keep the file — we will request it by secure upload link.</p>
+<p class="fine">Uploads open through a private link after submission (private storage, signed links, artwork deleted 30 days after delivery). For now, note the file names below and keep the files — we request them by secure upload link.</p>
 <label for="artwork_note">Artwork file name(s)</label><input id="artwork_note" placeholder="e.g. hotsauce-front-v3.pdf, hotsauce-back-v3.pdf">
 </div>
 
-<div class="card"><h2>Label facts (exactly as they appear / will appear)</h2>
-<label for="ingredients">Ingredient statement (exact text) *</label><textarea id="ingredients" required></textarea>
-<label for="allergens">Declared allergens &amp; precautionary (“may contain”) statements</label><textarea id="allergens" placeholder="e.g. Contains: Mustard. May contain: Soy."></textarea>
-<label for="cross_contact">Possible cross-contact allergens (as confirmed by you, the manufacturer)</label><textarea id="cross_contact"></textarea>
+<div class="card"><h2 style="font-size:1.3rem">Label facts — exactly as they appear, or will appear</h2>
+<label for="ingredients">Ingredient statement (exact text) <span class="req">*</span></label><textarea id="ingredients"></textarea>
+<label for="allergens">Declared allergens and precautionary ("may contain") statements</label><textarea id="allergens" placeholder="e.g. Contains: Mustard. May contain: Soy."></textarea>
+<label for="cross_contact">Possible cross-contact allergens, as confirmed by you, the manufacturer</label><textarea id="cross_contact"></textarea>
 <label for="serving">Declared serving amount (e.g. 15 mL / 1 tbsp)</label><input id="serving">
 <div class="grid">
 <div><label for="nf_cal">Nutrition — calories per serving</label><input id="nf_cal" inputmode="decimal"></div>
@@ -57,24 +82,124 @@
 <div><label for="nf_per100">Same values per 100 g available?</label><select id="nf_per100"><option>No</option><option>Yes — will provide</option></select></div>
 </div>
 <label for="notes">Formulation / processing notes (optional)</label><textarea id="notes"></textarea>
-<label style="font-weight:400"><input type="checkbox" id="truthful" required style="width:auto"> I confirm the information submitted is truthful and complete to the best of my knowledge. *</label>
+</div>
+<div class="stepnav"><button class="btn ghost" type="button" data-back>Back</button><button class="btn brand" type="button" data-next>Continue to review</button></div>
 </div>
 
-<p data-payments-soon class="notice">Payments opening soon — submitting joins the list for this SKU at $49. No card is taken today.</p>
-<p><button class="cta" type="submit" id="submit-btn">Submit intake</button></p>
-<p id="form-msg" class="fine"></p>
+<div class="steppane" data-pane="3">
+<div class="card"><h2 style="font-size:1.3rem">Review before you submit</h2>
+<div id="review"></div>
+</div>
+<p data-payments-soon class="notice">Payments opening soon — submitting joins the list for this SKU at $49. No card is taken today; we email the payment link when checkout opens.</p>
+<p data-payments-live style="display:none" class="notice">Submitting saves the intake and takes you to secure card checkout for $49. The preflight starts once payment is confirmed.</p>
+<label class="check"><input type="checkbox" id="truthful"> <span>I confirm the information submitted is truthful and complete to the best of my knowledge. <span class="req">*</span></span></label>
+<p class="err" id="err-truthful"></p>
+<div class="stepnav"><button class="btn ghost" type="button" data-back>Back</button><button class="btn brand" type="submit" id="submit-btn">Submit intake</button></div>
+<p id="form-msg" class="msg"></p>
+</div>
 </form>
 
-<p class="fine">Preflight only. Not a legal certificate, laboratory analysis, CFIA certification, or a guarantee of regulatory compliance. Money back if your file cannot be processed — not because the audit finds issues.</p>
+<div id="success" style="display:none"></div>
+
+<p class="fine" style="margin-top:26px">Preflight only. Not a legal certificate, laboratory analysis, CFIA certification, or a guarantee of regulatory compliance. Money back if your file cannot be processed — not because the audit finds issues.</p>
+</div>
+
+<footer class="site">
+<p class="fname">LabelReady Canada</p>
+<p>A service of Banriq IQ — sole proprietorship, Richmond Hill, Ontario. Contact: <a href="mailto:rufat.baghirov97@gmail.com">rufat.baghirov97@gmail.com</a></p>
+<p>LabelReady Canada provides a pre-print label preflight: a structured check of existing artwork against published CFIA and Health Canada requirements. It is not a CFIA certification, legal advice, laboratory analysis, or a guarantee of regulatory compliance.</p>
+<p>Not affiliated with CFIA or Health Canada.</p>
+</footer>
+
 </div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="assets/config.js"></script>
 <script src="assets/app.js"></script>
 <script>
 function v(id){ return document.getElementById(id).value.trim(); }
+function markErr(id, text){
+  var f = document.getElementById(id); if (!f) { return; }
+  var e = f.parentNode.querySelector(".err[data-for='" + id + "']");
+  if (!e) { e = document.createElement("p"); e.className = "err"; e.setAttribute("data-for", id); f.parentNode.appendChild(e); }
+  if (text) { f.setAttribute("aria-invalid", "true"); e.textContent = text; e.classList.add("on"); }
+  else { f.removeAttribute("aria-invalid"); e.textContent = ""; e.classList.remove("on"); }
+}
+function need(id, msgText){
+  if (!v(id)) { markErr(id, msgText); return false; }
+  markErr(id, ""); return true;
+}
+var current = 1;
+function showStep(n){
+  current = n;
+  document.querySelectorAll(".steppane").forEach(function(p){
+    p.classList.toggle("on", Number(p.getAttribute("data-pane")) === n);
+  });
+  document.querySelectorAll("#progress li").forEach(function(li){
+    var p = Number(li.getAttribute("data-p"));
+    li.classList.toggle("cur", p === n);
+    li.classList.toggle("done", p < n);
+  });
+  if (n === 3) { buildReview(); }
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+function validateStep(n){
+  var ok = true, firstBad = null;
+  function chk(id, t){ if (!need(id, t)) { ok = false; if (!firstBad) { firstBad = id; } } }
+  if (n === 1) {
+    chk("brand", "Enter your brand or company name.");
+    chk("contact_name", "Enter the contact name.");
+    if (!v("contact_email")) { chk("contact_email", "Enter a contact email."); }
+    else if (v("contact_email").indexOf("@") < 1) { markErr("contact_email", "That email address does not look complete."); ok = false; firstBad = firstBad || "contact_email"; }
+    else { markErr("contact_email", ""); }
+  }
+  if (n === 2) {
+    chk("product_name", "Enter the product name as it appears on the label.");
+    chk("net_quantity", "Enter the net quantity as declared, e.g. 355 mL.");
+    chk("ingredients", "Paste the ingredient statement exactly as it appears, or will appear.");
+  }
+  if (firstBad) { document.getElementById(firstBad).focus(); }
+  return ok;
+}
+document.querySelectorAll("[data-next]").forEach(function(b){
+  b.addEventListener("click", function(){ if (validateStep(current)) { showStep(current + 1); } });
+});
+document.querySelectorAll("[data-back]").forEach(function(b){
+  b.addEventListener("click", function(){ showStep(current - 1); });
+});
+var LABELS = [
+  ["Brand / company","brand"],["Contact name","contact_name"],["Contact email","contact_email"],["Province sold","province"],
+  ["Product name","product_name"],["Category","category"],["Net quantity","net_quantity"],["Label language","label_language"],
+  ["Packaging style","packaging_style"],["Intended consumer","consumer_age"],
+  ["Principal display surface (cm²)","pds_cm"],["Available display surface (cm²)","ads_cm"],
+  ["Artwork file name(s)","artwork_note"],["Ingredient statement","ingredients"],
+  ["Declared allergens / precautionary","allergens"],["Cross-contact allergens","cross_contact"],
+  ["Serving amount","serving"],["Calories per serving","nf_cal"],["Total fat (g)","nf_fat"],
+  ["Saturated fat (g)","nf_sat"],["Trans fat (g)","nf_trans"],["Sodium (mg)","nf_sodium"],
+  ["Sugars (g)","nf_sugars"],["Carbohydrate (g)","nf_carb"],["Fibre (g)","nf_fibre"],["Protein (g)","nf_protein"],
+  ["Per-100 g values available","nf_per100"],["Notes","notes"]
+];
+function esc(s){ return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;"); }
+function buildReview(){
+  var rows = LABELS.map(function(pair){
+    var val = v(pair[1]);
+    return "<tr><th>" + pair[0] + "</th><td>" + (val ? esc(val) : "<span class='fine'>Not provided</span>") + "</td></tr>";
+  }).join("");
+  document.getElementById("review").innerHTML =
+    "<table class='plain'>" + rows + "</table>" +
+    "<p class='fine' style='margin-top:12px'>Price: CAD $49, one-off, for one SKU. Standard turnaround 2 business days from a complete submission.</p>";
+}
+function shortRef(id){ return String(id || "").replace(/[^a-zA-Z0-9]/g, "").slice(0, 8).toUpperCase(); }
 document.getElementById("intake").addEventListener("submit", async function(e){
   e.preventDefault();
   var msg = document.getElementById("form-msg");
+  if (!validateStep(1) || !validateStep(2)) {
+    msg.textContent = "A required field in an earlier step is empty. Use Back to review the steps."; msg.className = "msg err-text"; return;
+  }
+  var te = document.getElementById("err-truthful");
+  if (!document.getElementById("truthful").checked) {
+    te.textContent = "Confirm the statement above before submitting."; te.classList.add("on"); return;
+  }
+  te.textContent = ""; te.classList.remove("on");
   var intake = {
     brand: v("brand"), contact_name: v("contact_name"), contact_email: v("contact_email"),
     province: v("province"), product_name: v("product_name"), category: v("category"),
@@ -90,16 +215,42 @@ document.getElementById("intake").addEventListener("submit", async function(e){
     nutrition_per_100g_available: v("nf_per100"), notes: v("notes"),
     truthfulness_confirmed: document.getElementById("truthful").checked
   };
+  var btn = document.getElementById("submit-btn");
+  btn.disabled = true; msg.textContent = "Saving your intake…"; msg.className = "msg";
   try {
     var order = await Platform.createOrder(intake);
     if (Platform.paymentsReady) {
       msg.textContent = "Intake saved. Taking you to secure checkout…";
-      if (!Platform.checkout(order.id)) { msg.textContent = "Intake saved. Checkout could not open — see status page."; }
+      if (Platform.checkout(order.id)) { return; }
+      showSuccess(order, "payment");
     } else {
-      msg.innerHTML = "You are on the list for this SKU. We will email the $49 payment link when checkout opens. " +
-        'Track it here: <a href="status.html?id=' + encodeURIComponent(order.id) + '">order status</a>.';
+      showSuccess(order, "waitlist");
     }
-  } catch (err) { msg.textContent = "Could not save: " + err.message; }
+  } catch (err) {
+    msg.textContent = "Could not save: " + err.message; msg.className = "msg err-text"; btn.disabled = false;
+  }
 });
+function showSuccess(order, kind){
+  document.getElementById("intake").style.display = "none";
+  document.getElementById("progress").style.display = "none";
+  var box = document.getElementById("success");
+  var statusUrl = "status.html?id=" + encodeURIComponent(order.id);
+  var next = kind === "waitlist"
+    ? "<p>You are on the list for this SKU at $49. No card has been taken. When checkout opens, we email the payment link to <strong>" + esc(v("contact_email")) + "</strong>, and the preflight starts once payment is confirmed.</p>"
+    : "<p>Your intake is saved and marked as awaiting payment. If checkout did not open, use the Pay button on the status page.</p>";
+  box.innerHTML = "<div class='success'><p class='sec-label'>Intake received</p>" +
+    "<h2>Order reference <span class='refcode'>" + shortRef(order.id) + "</span></h2>" +
+    next +
+    "<h3 style='margin-top:18px'>What happens next</h3>" +
+    "<ol class='steps'>" +
+    "<li><div><h3>Artwork request</h3><p>We send a private upload link for your artwork files to your contact email.</p></div></li>" +
+    "<li><div><h3>Preflight</h3><p>The nine checks are run against your artwork and the facts you confirmed. Standard turnaround is 2 business days from a complete submission.</p></div></li>" +
+    "<li><div><h3>Report</h3><p>The annotated report and designer fix list are delivered to your account, and the order status moves to report ready.</p></div></li>" +
+    "</ol>" +
+    "<div class='btnrow'><a class='btn brand' href='" + statusUrl + "'>Track this order</a><a class='btn ghost' href='dashboard.html'>Go to your dashboard</a></div>" +
+    "<p class='fine'>Keep the full order ID for support: <span class='refcode'>" + esc(order.id) + "</span></p></div>";
+  box.style.display = "";
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
 </script>
 </body></html>

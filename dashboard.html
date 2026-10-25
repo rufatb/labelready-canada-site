@@ -1,41 +1,96 @@
 <!DOCTYPE html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Dashboard — LabelReady Canada</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/style.css"></head>
 <body><div class="wrap">
-<header class="site"><a class="logo" href="index.html">LabelReady Canada</a>
-<nav><a href="order.html">New order</a><a href="#" id="signout-link">Sign out</a></nav></header>
+
+<header class="site">
+<a class="wordmark" href="index.html"><svg class="mark" width="26" height="26" viewBox="0 0 26 26" aria-hidden="true"><rect width="26" height="26" rx="5" fill="#0E5941"/><path d="M7 13.5l4 4L19 9" stroke="#fff" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="name">LabelReady Canada</span></a>
+<nav class="main">
+<a href="index.html#how">How it works</a>
+<a href="index.html#sample">Sample report</a>
+<a href="index.html#pricing">Pricing</a>
+<a href="index.html#faq">FAQ</a>
+<a href="login.html">Sign in</a>
+<a class="btn small" href="order.html">Start</a>
+</nav></header>
 
 <div id="mode-banner" class="banner" style="display:none"></div>
-<h1 style="font-size:1.6rem">Your dashboard</h1>
-<p id="who" class="fine"></p>
-<p><a class="cta" href="order.html">Check one label — $49</a></p>
 
-<div class="card"><h2>Your orders</h2>
+<p class="sec-label" style="margin-top:40px">Dashboard</p>
+<h1 style="font-size:2rem">Your orders</h1>
+<p id="who" class="fine"></p>
+
 <div id="orders"><p class="fine">Loading…</p></div>
+
+<div class="card">
+<h2 style="font-size:1.25rem">What the statuses mean</h2>
+<table class="plain">
+<tr><th>waitlist</th><td>Submitted before payments opened. No card has been charged.</td></tr>
+<tr><th>pending_payment</th><td>Intake saved; waiting for the Stripe payment.</td></tr>
+<tr><th>paid</th><td>Payment confirmed; the preflight is queued.</td></tr>
+<tr><th>in_review</th><td>Your label is being checked against the nine items.</td></tr>
+<tr><th>needs_info</th><td>We emailed you for a missing fact. The turnaround clock restarts when it arrives.</td></tr>
+<tr><th>needs_expert_review</th><td>A finding needs a qualified labelling specialist before a conclusion is given. We would rather pause than guess.</td></tr>
+<tr><th>report_ready</th><td>The report has been delivered to your account.</td></tr>
+<tr><th>declined</th><td>Outside the supported scope. No charge was taken.</td></tr>
+<tr><th>refunded</th><td>The check could not be completed and the payment was returned.</td></tr>
+</table>
 </div>
-<p class="fine">Status meanings: <b>waitlist</b> = submitted before payments opened · <b>pending_payment</b> = awaiting Stripe payment · <b>paid</b> = payment confirmed, preflight queued · <b>in_review</b> = being checked · <b>needs_info</b> = we emailed you for missing facts · <b>report_ready</b> = report delivered · <b>needs_expert_review</b> = a qualified labelling specialist must review before conclusions · <b>declined</b> = outside scope, no charge taken.</p>
+
+<footer class="site">
+<p class="fname">LabelReady Canada</p>
+<p>A service of Banriq IQ — sole proprietorship, Richmond Hill, Ontario. Contact: <a href="mailto:rufat.baghirov97@gmail.com">rufat.baghirov97@gmail.com</a></p>
+<p>LabelReady Canada provides a pre-print label preflight: a structured check of existing artwork against published CFIA and Health Canada requirements. It is not a CFIA certification, legal advice, laboratory analysis, or a guarantee of regulatory compliance.</p>
+<p>Not affiliated with CFIA or Health Canada.</p>
+</footer>
+
 </div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="assets/config.js"></script>
 <script src="assets/app.js"></script>
 <script>
+function esc(s){ return String(s == null ? "" : s).replace(/&/g,"&amp;").replace(/</g,"&lt;"); }
+function chipClass(s){
+  if (s === "report_ready" || s === "paid") { return "chip pass"; }
+  if (s === "needs_info" || s === "needs_expert_review" || s === "pending_payment") { return "chip flag"; }
+  return "chip";
+}
 (async function(){
   var user = await Platform.currentUser();
   var who = document.getElementById("who"), box = document.getElementById("orders");
-  if (!user) { who.innerHTML = 'You are not logged in. <a href="login.html">Log in or create an account</a>.'; box.innerHTML = ""; return; }
-  who.textContent = "Signed in as " + (user.email || "");
+  if (!user) {
+    who.innerHTML = 'You are not signed in. <a href="login.html">Sign in or create an account</a> to see your orders.';
+    box.innerHTML = ""; return;
+  }
+  who.innerHTML = "Signed in as " + esc(user.email || "") + ' · <a href="#" id="signout-link">Sign out</a>';
+  var out = document.getElementById("signout-link");
+  if (out) { out.addEventListener("click", function(e){ e.preventDefault(); Platform.signOut(); }); }
   try {
     var orders = await Platform.listOrders();
-    if (!orders.length) { box.innerHTML = '<p class="fine">No orders yet.</p>'; return; }
-    var rows = orders.map(function(o){
-      var p = (o.intake && o.intake.product_name) || "—";
-      return "<tr><td>" + new Date(o.created_at).toLocaleDateString() + "</td><td>" + p +
-        '</td><td><span class="status">' + o.status + "</span></td>" +
-        '<td><a href="status.html?id=' + encodeURIComponent(o.id) + '">View</a></td></tr>';
+    if (!orders.length) {
+      box.innerHTML = "<div class='empty'><h3 style='font-family:var(--font-body)'>No orders yet</h3>" +
+        "<p class='fine'>When you submit a label for preflight, it appears here with its status.</p>" +
+        "<p><a class='btn brand' href='order.html'>Check one label — $49</a></p></div>";
+      return;
+    }
+    box.innerHTML = orders.map(function(o){
+      var name = (o.intake && o.intake.product_name) || o.product || "Label Preflight";
+      var sub = (o.intake && o.intake.category) ? esc(o.intake.category) + " · " : "";
+      return "<div class='order-card'><div class='oc-main'>" +
+        "<div class='oc-name'>" + esc(name) + "</div>" +
+        "<div class='oc-meta'>" + sub + esc(o.product || "") + " · Submitted " + new Date(o.created_at).toLocaleDateString() + "</div>" +
+        "<div class='oc-meta'>Reference <span class='refcode'>" + esc(String(o.id).replace(/[^a-zA-Z0-9]/g, "").slice(0, 8).toUpperCase()) + "</span></div>" +
+        "</div><div class='oc-side'>" +
+        "<div class='oc-price'>CAD $" + esc(o.price_cad) + "</div>" +
+        "<p style='margin:8px 0'><span class='" + chipClass(o.status) + "'>" + esc(o.status) + "</span></p>" +
+        "<a class='btn small ghost' href='status.html?id=" + encodeURIComponent(o.id) + "'>View status</a>" +
+        "</div></div>";
     }).join("");
-    box.innerHTML = "<table><tr><th>Date</th><th>Product</th><th>Status</th><th></th></tr>" + rows + "</table>";
-  } catch (e) { box.innerHTML = '<p class="fine">Could not load orders: ' + e.message + "</p>"; }
+  } catch (e) { box.innerHTML = '<p class="fine">Could not load orders: ' + esc(e.message) + "</p>"; }
 })();
 </script>
 </body></html>
