@@ -1,12 +1,33 @@
 <!DOCTYPE html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>LabelReady Canada — Check your Canadian food label before it goes to print</title>
-<style>body{font-family:system-ui,sans-serif;max-width:760px;margin:40px auto;padding:0 20px;color:#14301e}h1{font-size:2rem}.cta{background:#1d6b3c;color:#fff;padding:14px 22px;border-radius:10px;display:inline-block;text-decoration:none;font-weight:700}.price{font-size:1.4rem;font-weight:700;color:#b97d10}small{color:#555}</style></head>
-<body>
+<link rel="stylesheet" href="assets/style.css"></head>
+<body><div class="wrap">
+<header class="site"><a class="logo" href="index.html">LabelReady Canada</a>
+<nav><a href="order.html">Order</a><a href="login.html">Log in</a><a href="dashboard.html">Dashboard</a></nav></header>
+
+<div id="mode-banner" class="banner" style="display:none"></div>
+
 <h1>Check your Canadian food label before it goes to print.</h1>
 <p class="price">One SKU — $49 · No subscription</p>
 <p>Upload your existing packaging artwork and get a page-annotated pre-print preflight: bilingual content, allergens, nutrition-facts table structure, and the front-of-package nutrition symbol — with CFIA / Health Canada citations and a designer-ready fix list.</p>
 <p>Beachhead: Ontario shelf-stable sauces &amp; condiments.</p>
-<a class="cta" href="mailto:rufat.baghirov97@gmail.com?subject=LabelReady%20preflight%20—%20one%20SKU%20($49)">Check one label — $49</a>
-<p><small>Preflight only. Not a legal certificate, laboratory analysis, CFIA certification, or a guarantee of regulatory compliance.</small></p>
+
+<p data-payments-live style="display:none"><a class="cta" href="order.html">Check one label — $49</a></p>
+<p data-payments-soon><a class="cta" href="order.html">Join the list — ordering opens soon</a></p>
+<p data-payments-soon class="fine">Payments opening soon — join the list: create an account and submit your label details now; we will email you the $49 payment link as soon as checkout opens. No card is taken today.</p>
+
+<div class="card"><h2>How it works</h2>
+<ol>
+<li>Create an account and submit your label details (ingredients, allergens, nutrition panel, label language).</li>
+<li>Pay once per SKU — $49, no subscription.</li>
+<li>Receive a cited, page-annotated preflight report with a designer-ready fix list. Status is tracked on your dashboard.</li>
+</ol>
+<p class="fine">Free eligibility check first: if your product is outside the supported beachhead (Ontario shelf-stable sauces &amp; condiments), we say so before any payment.</p></div>
+
+<footer><small>Preflight only. Not a legal certificate, laboratory analysis, CFIA certification, or a guarantee of regulatory compliance. Uploaded artwork is used only to prepare your report.</small></footer>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="assets/config.js"></script>
+<script src="assets/app.js"></script>
 </body></html>

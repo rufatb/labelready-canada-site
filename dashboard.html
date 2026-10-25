@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Dashboard — LabelReady Canada</title>
+<link rel="stylesheet" href="assets/style.css"></head>
+<body><div class="wrap">
+<header class="site"><a class="logo" href="index.html">LabelReady Canada</a>
+<nav><a href="order.html">New order</a><a href="#" id="signout-link">Sign out</a></nav></header>
+
+<div id="mode-banner" class="banner" style="display:none"></div>
+<h1 style="font-size:1.6rem">Your dashboard</h1>
+<p id="who" class="fine"></p>
+<p><a class="cta" href="order.html">Check one label — $49</a></p>
+
+<div class="card"><h2>Your orders</h2>
+<div id="orders"><p class="fine">Loading…</p></div>
+</div>
+<p class="fine">Status meanings: <b>waitlist</b> = submitted before payments opened · <b>pending_payment</b> = awaiting Stripe payment · <b>paid</b> = payment confirmed, preflight queued · <b>in_review</b> = being checked · <b>needs_info</b> = we emailed you for missing facts · <b>report_ready</b> = report delivered · <b>needs_expert_review</b> = a qualified labelling specialist must review before conclusions · <b>declined</b> = outside scope, no charge taken.</p>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="assets/config.js"></script>
+<script src="assets/app.js"></script>
+<script>
+(async function(){
+  var user = await Platform.currentUser();
+  var who = document.getElementById("who"), box = document.getElementById("orders");
+  if (!user) { who.innerHTML = 'You are not logged in. <a href="login.html">Log in or create an account</a>.'; box.innerHTML = ""; return; }
+  who.textContent = "Signed in as " + (user.email || "");
+  try {
+    var orders = await Platform.listOrders();
+    if (!orders.length) { box.innerHTML = '<p class="fine">No orders yet.</p>'; return; }
+    var rows = orders.map(function(o){
+      var p = (o.intake && o.intake.product_name) || "—";
+      return "<tr><td>" + new Date(o.created_at).toLocaleDateString() + "</td><td>" + p +
+        '</td><td><span class="status">' + o.status + "</span></td>" +
+        '<td><a href="status.html?id=' + encodeURIComponent(o.id) + '">View</a></td></tr>';
+    }).join("");
+    box.innerHTML = "<table><tr><th>Date</th><th>Product</th><th>Status</th><th></th></tr>" + rows + "</table>";
+  } catch (e) { box.innerHTML = '<p class="fine">Could not load orders: ' + e.message + "</p>"; }
+})();
+</script>
+</body></html>

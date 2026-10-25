@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Order a label preflight — LabelReady Canada</title>
+<link rel="stylesheet" href="assets/style.css"></head>
+<body><div class="wrap">
+<header class="site"><a class="logo" href="index.html">LabelReady Canada</a>
+<nav><a href="dashboard.html">Dashboard</a><a href="login.html">Log in</a></nav></header>
+
+<div id="mode-banner" class="banner" style="display:none"></div>
+<h1 style="font-size:1.6rem">Label preflight intake — one SKU, $49</h1>
+<p class="fine">Supported beachhead: Ontario shelf-stable sauces &amp; condiments. Other categories get a free eligibility check before any payment. Fields mirror what the preflight actually checks — nothing is silently inferred.</p>
+
+<form id="intake">
+<div class="card"><h2>About you</h2>
+<div class="grid">
+<div><label for="brand">Brand / company *</label><input id="brand" required></div>
+<div><label for="contact_name">Contact name *</label><input id="contact_name" required></div>
+<div><label for="contact_email">Contact email *</label><input id="contact_email" type="email" required></div>
+<div><label for="province">Province sold</label><select id="province"><option>Ontario</option><option>Other (eligibility check)</option></select></div>
+</div></div>
+
+<div class="card"><h2>Product</h2>
+<div class="grid">
+<div><label for="product_name">Product name (common name on label) *</label><input id="product_name" required></div>
+<div><label for="category">Category *</label><select id="category">
+<option>Shelf-stable sauce</option><option>Shelf-stable condiment</option>
+<option>Other packaged food (eligibility check first)</option></select></div>
+<div><label for="net_quantity">Net quantity (as declared, e.g. 355 mL) *</label><input id="net_quantity" required></div>
+<div><label for="label_language">Language(s) on the label *</label><select id="label_language">
+<option>English and French</option><option>English only</option><option>French only</option></select></div>
+<div><label for="packaging_style">Packaging style</label><input id="packaging_style" placeholder="e.g. glass bottle, paper label"></div>
+<div><label for="consumer_age">Intended consumer</label><select id="consumer_age"><option>General / adults</option><option>Children</option></select></div>
+<div><label for="pds_cm">Principal display surface (cm², if known)</label><input id="pds_cm" inputmode="decimal" placeholder="Needed for type-size / symbol-size checks"></div>
+<div><label for="ads_cm">Available display surface (cm², if known)</label><input id="ads_cm" inputmode="decimal"></div>
+</div>
+<label for="artwork">Artwork file (PDF/JPG/PNG, front &amp; back, max 25 MB)</label>
+<input id="artwork" type="file" accept=".pdf,.jpg,.jpeg,.png" disabled>
+<p class="fine">Uploads switch on with the live platform (private Supabase Storage bucket “artwork”, signed links, 30-day deletion). In preview, note your file name below and keep the file — we will request it by secure upload link.</p>
+<label for="artwork_note">Artwork file name(s)</label><input id="artwork_note" placeholder="e.g. hotsauce-front-v3.pdf, hotsauce-back-v3.pdf">
+</div>
+
+<div class="card"><h2>Label facts (exactly as they appear / will appear)</h2>
+<label for="ingredients">Ingredient statement (exact text) *</label><textarea id="ingredients" required></textarea>
+<label for="allergens">Declared allergens &amp; precautionary (“may contain”) statements</label><textarea id="allergens" placeholder="e.g. Contains: Mustard. May contain: Soy."></textarea>
+<label for="cross_contact">Possible cross-contact allergens (as confirmed by you, the manufacturer)</label><textarea id="cross_contact"></textarea>
+<label for="serving">Declared serving amount (e.g. 15 mL / 1 tbsp)</label><input id="serving">
+<div class="grid">
+<div><label for="nf_cal">Nutrition — calories per serving</label><input id="nf_cal" inputmode="decimal"></div>
+<div><label for="nf_fat">Total fat (g)</label><input id="nf_fat" inputmode="decimal"></div>
+<div><label for="nf_sat">Saturated fat (g)</label><input id="nf_sat" inputmode="decimal"></div>
+<div><label for="nf_trans">Trans fat (g)</label><input id="nf_trans" inputmode="decimal"></div>
+<div><label for="nf_sodium">Sodium (mg)</label><input id="nf_sodium" inputmode="decimal"></div>
+<div><label for="nf_sugars">Sugars (g)</label><input id="nf_sugars" inputmode="decimal"></div>
+<div><label for="nf_carb">Carbohydrate (g)</label><input id="nf_carb" inputmode="decimal"></div>
+<div><label for="nf_fibre">Fibre (g)</label><input id="nf_fibre" inputmode="decimal"></div>
+<div><label for="nf_protein">Protein (g)</label><input id="nf_protein" inputmode="decimal"></div>
+<div><label for="nf_per100">Same values per 100 g available?</label><select id="nf_per100"><option>No</option><option>Yes — will provide</option></select></div>
+</div>
+<label for="notes">Formulation / processing notes (optional)</label><textarea id="notes"></textarea>
+<label style="font-weight:400"><input type="checkbox" id="truthful" required style="width:auto"> I confirm the information submitted is truthful and complete to the best of my knowledge. *</label>
+</div>
+
+<p data-payments-soon class="notice">Payments opening soon — submitting joins the list for this SKU at $49. No card is taken today.</p>
+<p><button class="cta" type="submit" id="submit-btn">Submit intake</button></p>
+<p id="form-msg" class="fine"></p>
+</form>
+
+<p class="fine">Preflight only. Not a legal certificate, laboratory analysis, CFIA certification, or a guarantee of regulatory compliance. Money back if your file cannot be processed — not because the audit finds issues.</p>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="assets/config.js"></script>
+<script src="assets/app.js"></script>
+<script>
+function v(id){ return document.getElementById(id).value.trim(); }
+document.getElementById("intake").addEventListener("submit", async function(e){
+  e.preventDefault();
+  var msg = document.getElementById("form-msg");
+  var intake = {
+    brand: v("brand"), contact_name: v("contact_name"), contact_email: v("contact_email"),
+    province: v("province"), product_name: v("product_name"), category: v("category"),
+    net_quantity: v("net_quantity"), label_language: v("label_language"),
+    packaging_style: v("packaging_style"), consumer_age: v("consumer_age"),
+    principal_display_surface_cm2: v("pds_cm"), available_display_surface_cm2: v("ads_cm"),
+    artwork_files_note: v("artwork_note"),
+    ingredients: v("ingredients"), allergens_declared: v("allergens"),
+    cross_contact_allergens: v("cross_contact"), serving_amount: v("serving"),
+    nutrition_per_serving: { calories: v("nf_cal"), fat_g: v("nf_fat"), saturated_fat_g: v("nf_sat"),
+      trans_fat_g: v("nf_trans"), sodium_mg: v("nf_sodium"), sugars_g: v("nf_sugars"),
+      carbohydrate_g: v("nf_carb"), fibre_g: v("nf_fibre"), protein_g: v("nf_protein") },
+    nutrition_per_100g_available: v("nf_per100"), notes: v("notes"),
+    truthfulness_confirmed: document.getElementById("truthful").checked
+  };
+  try {
+    var order = await Platform.createOrder(intake);
+    if (Platform.paymentsReady) {
+      msg.textContent = "Intake saved. Taking you to secure checkout…";
+      if (!Platform.checkout(order.id)) { msg.textContent = "Intake saved. Checkout could not open — see status page."; }
+    } else {
+      msg.innerHTML = "You are on the list for this SKU. We will email the $49 payment link when checkout opens. " +
+        'Track it here: <a href="status.html?id=' + encodeURIComponent(order.id) + '">order status</a>.';
+    }
+  } catch (err) { msg.textContent = "Could not save: " + err.message; }
+});
+</script>
+</body></html>
