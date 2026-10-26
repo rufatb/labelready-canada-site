@@ -27,7 +27,7 @@ window.PLATFORM_CONFIG = {
   SUPABASE_URL: "https://gttjpsojfqosppfwpqgn.supabase.co",           // e.g. https://abcd1234.supabase.co
   SUPABASE_ANON_KEY: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd0dGpwc29qZnFvc3BwZndwcWduIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTI4MDcyNjIsImV4cCI6MjEwODM4MzI2Mn0.4oSKyOIGiRpj6TSkbjNOaMyns8StUUONGO66IGKR_2o", // long anon/public key from Supabase
 
-  STRIPE_PAYMENT_LINK: "PLACEHOLDER_STRIPE_PAYMENT_LINK", // e.g. https://buy.stripe.com/...
+  STRIPE_PAYMENT_LINK: "https://buy.stripe.com/7sY6oH52YeIVa9E0JIgEg00", // e.g. https://buy.stripe.com/...
 
   SUPPORT_EMAIL: "rufat.baghirov97@gmail.com",
   STORAGE_BUCKET: "artwork" // Supabase Storage bucket name (see supabase/README.md step 5)
