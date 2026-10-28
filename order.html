@@ -22,8 +22,14 @@
 
 <div style="max-width:820px">
 <p class="sec-label" style="margin-top:40px">Order</p>
-<h1 style="font-size:2rem">Label preflight intake — one SKU, $49</h1>
-<p class="lede" style="font-size:1.02rem">Supported scope: Ontario shelf-stable sauces and condiments. Anything else gets a free eligibility check before any payment. The fields below mirror what the preflight actually checks — nothing is silently inferred, and unknown answers stay unknown.</p>
+<h1 style="font-size:2rem" id="order-h1">Label preflight intake — one SKU, $49</h1>
+<p class="lede" style="font-size:1.02rem">Supported scope for the full preflight: Ontario shelf-stable sauces and condiments. Anything else gets a free eligibility check before any payment. The fields below mirror what the checks actually look at — nothing is silently inferred, and unknown answers stay unknown.</p>
+
+<div class="card" style="margin-bottom:22px"><h2 style="font-size:1.3rem">Choose your check</h2>
+<label class="checkline"><input type="radio" name="product_choice" value="quickcheck"><span><strong>Label QuickCheck — $10</strong><br>For any packaged food sold in Canada, not just sauces. Send your label artwork. We check the 10 things that most often force a reprint — allergens, bilingual panels, nutrition table structure, front-of-package symbol, net quantity — and send a plain-English list of what is wrong and what to fix.</span></label>
+<label class="checkline"><input type="radio" name="product_choice" value="full" checked><span><strong>Label Preflight — $49</strong><br>The deeper check for one SKU: all nine items run against your artwork, a page-annotated report with the rule behind every finding, and a designer fix list. Scope: Ontario shelf-stable sauces and condiments.</span></label>
+<p class="fine" style="margin-top:10px">The same intake is used for both. Neither check is a CFIA certification, legal advice, or a guarantee of regulatory compliance.</p>
+</div>
 
 <ol class="progress" id="progress">
 <li class="cur" data-p="1"><span class="n">1</span><span class="lbl">Your details</span></li>
@@ -90,8 +96,8 @@
 <div class="card"><h2 style="font-size:1.3rem">Review before you submit</h2>
 <div id="review"></div>
 </div>
-<p data-payments-soon class="notice">Payments opening soon — submitting joins the list for this SKU at $49. No card is taken today; we email the payment link when checkout opens.</p>
-<p data-payments-live style="display:none" class="notice">Submitting saves the intake and takes you to secure card checkout for $49. The preflight starts once payment is confirmed.</p>
+<p data-payments-soon class="notice" id="notice-soon">Payments opening soon — submitting joins the list for this SKU at $49. No card is taken today; we email the payment link when checkout opens.</p>
+<p data-payments-live style="display:none" class="notice" id="notice-live">Submitting saves the intake and takes you to secure card checkout for $49. The preflight starts once payment is confirmed.</p>
 <label class="check"><input type="checkbox" id="truthful"> <span>I confirm the information submitted is truthful and complete to the best of my knowledge. <span class="req">*</span></span></label>
 <p class="err" id="err-truthful"></p>
 <div class="stepnav"><button class="btn ghost" type="button" data-back>Back</button><button class="btn brand" type="submit" id="submit-btn">Submit intake</button></div>
@@ -128,6 +134,39 @@ function need(id, msgText){
   if (!v(id)) { markErr(id, msgText); return false; }
   markErr(id, ""); return true;
 }
+/* ---------- product choice ---------- */
+function selectedProduct(){
+  var el = document.querySelector("input[name='product_choice']:checked");
+  return Platform.productById(el ? el.value : "full");
+}
+function syncProduct(){
+  var p = selectedProduct();
+  document.getElementById("order-h1").textContent = p.id === "quickcheck"
+    ? "Label QuickCheck intake — $10"
+    : "Label preflight intake — one SKU, $49";
+  var soon = document.getElementById("notice-soon"), live = document.getElementById("notice-live");
+  if (soon && live) {
+    if (Platform.paymentsReadyFor(p)) {
+      soon.style.display = "none"; live.style.display = "";
+      live.textContent = "Submitting saves the intake and takes you to secure card checkout for " + p.price_label + ". The check starts once payment is confirmed.";
+    } else {
+      soon.style.display = ""; live.style.display = "none";
+      soon.textContent = "Payments for the " + p.name + " open soon — submitting joins the list at " + p.price_label + ". No card is taken today; we email the payment link when checkout opens.";
+    }
+  }
+  if (current === 3) { buildReview(); }
+}
+document.querySelectorAll("input[name='product_choice']").forEach(function(r){
+  r.addEventListener("change", syncProduct);
+});
+(function(){
+  var q = new URLSearchParams(window.location.search).get("product");
+  if (q) {
+    var r = document.querySelector("input[name='product_choice'][value='" + q + "']");
+    if (r) { r.checked = true; }
+  }
+})();
+
 var current = 1;
 function showStep(n){
   current = n;
@@ -184,9 +223,10 @@ function buildReview(){
     var val = v(pair[1]);
     return "<tr><th>" + pair[0] + "</th><td>" + (val ? esc(val) : "<span class='fine'>Not provided</span>") + "</td></tr>";
   }).join("");
+  var p = selectedProduct();
   document.getElementById("review").innerHTML =
     "<table class='plain'>" + rows + "</table>" +
-    "<p class='fine' style='margin-top:12px'>Price: CAD $49, one-off, for one SKU. Standard turnaround 2 business days from a complete submission.</p>";
+    "<p class='fine' style='margin-top:12px'>Service: " + esc(p.name) + " — CAD $" + p.price_cad + ", one-off" + (p.id === "quickcheck" ? "." : ", for one SKU.") + " Standard turnaround 2 business days from a complete submission.</p>";
 }
 function shortRef(id){ return String(id || "").replace(/[^a-zA-Z0-9]/g, "").slice(0, 8).toUpperCase(); }
 document.getElementById("intake").addEventListener("submit", async function(e){
@@ -218,10 +258,10 @@ document.getElementById("intake").addEventListener("submit", async function(e){
   var btn = document.getElementById("submit-btn");
   btn.disabled = true; msg.textContent = "Saving your intake…"; msg.className = "msg";
   try {
-    var order = await Platform.createOrder(intake);
-    if (Platform.paymentsReady) {
+    var order = await Platform.createOrder(intake, selectedProduct().id);
+    if (Platform.paymentsReadyFor(selectedProduct())) {
       msg.textContent = "Intake saved. Taking you to secure checkout…";
-      if (Platform.checkout(order.id)) { return; }
+      if (Platform.checkout(order.id, order)) { return; }
       showSuccess(order, "payment");
     } else {
       showSuccess(order, "waitlist");
@@ -236,7 +276,7 @@ function showSuccess(order, kind){
   var box = document.getElementById("success");
   var statusUrl = "status.html?id=" + encodeURIComponent(order.id);
   var next = kind === "waitlist"
-    ? "<p>You are on the list for this SKU at $49. No card has been taken. When checkout opens, we email the payment link to <strong>" + esc(v("contact_email")) + "</strong>, and the preflight starts once payment is confirmed.</p>"
+    ? "<p>You are on the list for " + esc(order.product) + " at $" + esc(order.price_cad) + ". No card has been taken. When checkout opens, we email the payment link to <strong>" + esc(v("contact_email")) + "</strong>, and the check starts once payment is confirmed.</p>"
     : "<p>Your intake is saved and marked as awaiting payment. If checkout did not open, use the Pay button on the status page.</p>";
   box.innerHTML = "<div class='success'><p class='sec-label'>Intake received</p>" +
     "<h2>Order reference <span class='refcode'>" + shortRef(order.id) + "</span></h2>" +
@@ -244,7 +284,7 @@ function showSuccess(order, kind){
     "<h3 style='margin-top:18px'>What happens next</h3>" +
     "<ol class='steps'>" +
     "<li><div><h3>Artwork request</h3><p>We send a private upload link for your artwork files to your contact email.</p></div></li>" +
-    "<li><div><h3>Preflight</h3><p>The nine checks are run against your artwork and the facts you confirmed. Standard turnaround is 2 business days from a complete submission.</p></div></li>" +
+    "<li><div><h3>The check</h3><p>The checks for the service you chose are run against your artwork and the facts you confirmed. Standard turnaround is 2 business days from a complete submission.</p></div></li>" +
     "<li><div><h3>Report</h3><p>The annotated report and designer fix list are delivered to your account, and the order status moves to report ready.</p></div></li>" +
     "</ol>" +
     "<p class='fine'>You can also generate an AI deep report for this order from the status page — a fuller AI-assisted draft with the reasoning behind each check and an email draft for your designer. It is human-reviewed before any print decision, and it is not a CFIA certification.</p>" +
@@ -253,5 +293,6 @@ function showSuccess(order, kind){
   box.style.display = "";
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
+syncProduct();
 </script>
 </body></html>
