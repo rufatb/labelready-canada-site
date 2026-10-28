@@ -33,7 +33,7 @@
 <div id="box"><p class="fine">Enter an order ID above, or open one from your <a href="dashboard.html">dashboard</a>. You can only view your own orders.</p></div>
 
 <p data-payments-soon class="notice">Payments opening soon — orders submitted now are on the waitlist and no card has been charged.</p>
-<p><button class="btn brand" id="pay-btn" style="display:none">Pay $49 securely</button></p>
+<p><button class="btn brand" id="pay-btn" style="display:none">Pay securely</button></p>
 <p id="report-slot"></p>
 <div id="ai-slot"></div>
 <p class="fine">Questions about an order: email <a href="mailto:rufat.baghirov97@gmail.com">rufat.baghirov97@gmail.com</a> with your order ID. Preflight only — not a CFIA certification or a guarantee of regulatory compliance.</p>
@@ -110,10 +110,12 @@ document.getElementById("lookup").addEventListener("submit", function(e){
       document.getElementById("report-slot").innerHTML =
         "<a class='btn brand' href='" + esc(o.report_url) + "'>Open your preflight report</a>";
     }
-    if (Platform.paymentsReady && o.status === "pending_payment") {
+    var prod = Platform.productForOrder(o);
+    if (prod && Platform.paymentsReadyFor(prod) && o.status === "pending_payment") {
       var b = document.getElementById("pay-btn");
+      b.textContent = "Pay $" + o.price_cad + " securely";
       b.style.display = "";
-      b.addEventListener("click", function(){ Platform.checkout(o.id); });
+      b.addEventListener("click", function(){ Platform.checkout(o.id, o); });
     }
   } catch (e) { box.innerHTML = '<p class="fine">Could not load this order: ' + esc(e.message) + "</p>"; }
 })();
