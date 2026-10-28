@@ -24,6 +24,34 @@ window.PLATFORM_CONFIG = {
   PRICE_CAD: 49,
   PRICE_LABEL: "$49",
 
+  /* Products sold on this platform. The first entry ("full") is the
+     original product and mirrors the legacy PRODUCT_NAME / PRICE_CAD /
+     PRICE_LABEL / STRIPE_PAYMENT_LINK fields, which stay in place for
+     backward compatibility. Each product carries its own Stripe Payment
+     Link. Until a product's stripe_link is a real
+     https://buy.stripe.com/... URL (any PLACEHOLDER_* value counts as
+     not live), orders for that product are saved as "waitlist" instead
+     of "pending_payment" — the same behaviour a single placeholder link
+     had before. */
+  PRODUCTS: [
+    {
+      id: "full",
+      name: "Label Preflight (1 SKU)",
+      price_cad: 49,
+      price_label: "$49",
+      stripe_link: "https://buy.stripe.com/7sY6oH52YeIVa9E0JIgEg00"
+    },
+    {
+      id: "quickcheck",
+      name: "Label QuickCheck",
+      price_cad: 10,
+      price_label: "$10",
+      // Go-live: Stripe Payment Link for "LabelReady Canada — Label
+      // QuickCheck", CAD 10.00, one-time. See BUILD_NOTES_QUICKCHECK.md.
+      stripe_link: "https://buy.stripe.com/7sY14n1QMbwJ2Hc9gegEg02"
+    }
+  ],
+
   SUPABASE_URL: "https://gttjpsojfqosppfwpqgn.supabase.co",           // e.g. https://abcd1234.supabase.co
   SUPABASE_ANON_KEY: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd0dGpwc29qZnFvc3BwZndwcWduIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTI4MDcyNjIsImV4cCI6MjEwODM4MzI2Mn0.4oSKyOIGiRpj6TSkbjNOaMyns8StUUONGO66IGKR_2o", // long anon/public key from Supabase
 
